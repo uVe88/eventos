@@ -14,4 +14,8 @@ class Comentario < Sequel::Model
     super
     validates_presence [:texto, :fecha_hora, :evento_id, :usuario_login], :message=>'Dato requerido'
   end
+
+  def has_key?(key)
+    return true 
+  end
 end

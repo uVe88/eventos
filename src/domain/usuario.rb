@@ -28,4 +28,9 @@ class Usuario < Sequel::Model
   def suscrito_a?(id_evento)
     suscritos_dataset.where(:evento_id=>id_evento).all.size>0
   end
+
+  def has_key?(key)
+    return true 
+  end
+  
 end

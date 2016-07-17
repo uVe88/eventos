@@ -18,6 +18,9 @@ class Evento < Sequel::Model
     validates_presence [:titulo, :descripcion, :fecha_hora, :lugar, :direccion, :poblacion], :message=>'Dato requerido'
   end
 
+  def has_key?(key)
+    return true 
+  end
 
   def resumen
     idx = descripcion.index("\n")
