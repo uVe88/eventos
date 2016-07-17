@@ -43,15 +43,15 @@
 					<div class="well">
 						<form class="form-horizontal">
 							<div class="form-group">
-								<label for="inputEmail3" class="col-sm-3 control-label">Email</label>
+								<label for="login" class="col-sm-3 control-label">Login</label>
 								<div class="col-sm-9">
-									<input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+									<input type="email" class="form-control" id="login" id="login" placeholder="Login">
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+								<label for="password" class="col-sm-3 control-label">Password</label>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+									<input type="password" class="form-control" id="password" id="password" placeholder="Password">
 								</div>
 							</div>
 							<div class="form-group">
@@ -64,7 +64,7 @@
 				</div>
 				<div class="col-md-8">
 					<div class="well">
-						<form action="iniciarRegistro.html">
+						<form action="iniciarRegistro">
 							<h1>¿No tienes cuenta? </h1>
 
 							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
@@ -103,9 +103,9 @@
 						  {{/entradas_agotadas}}
 						</div>
 						<div class="col-md-2">
-							<form action="obtenerEvento?id={{id}}>
+							<a href="obtenerEvento?id={{id}}">
 								<button type="submit" class="btn btn-primary btn-lg">Ver detalles</button>
-							</form>
+							</a>
 						</div>
 					</div>
 				</div>

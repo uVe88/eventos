@@ -38,45 +38,15 @@
 			</div><!-- /.container-fluid -->
 		</nav>
 		<div class="container">
-			<div class="row well">
-				<div class="col-md-3">
-					<a href="#" class="thumbnail">
-						<img src="img/eventos/{{id}}_g.jpg" alt="">
-					</a>
-				</div>
-				<div class="col-md-9">
-					<h2>{{titulo}}</h2>
-					{{{descripcion_par}}}
-					<p>
-						<span class="label label-info">{{fecha_cad}} {{hora_cad}}</span>
-					</p>
-					<div class="row">
-						<div class="col-md-12">
-							{{#entradas_agotadas}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								¡Entradas agotadas!
-							</div>
-							{{/entradas_agotadas}}
-							{{^entradas_agotadas}}
-							<div class="alert alert-success" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								Quedan {{entradas_disponibles }}
-							</div>
-							{{/entradas_agotadas}}
+			<div class="row">
+
+				<div class="col-md-12">
+					<div class="well">
+						<div class="alert alert-success" role="alert">
+							<h1>Gracias por registrarte…</h1>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<h3>Datos de ubicación del evento</h3>
-							<p>
-								<span class="label label-info">{{poblacion}}</span>
-								<span class="label label-info">{{lugar}}</span>
-							</p>
-							<img src="images/map.png" alt="" style="width: 100%;">
-						</div>
+						<hr>
+						<a href="/eventos">Ver eventos</a>
 					</div>
 				</div>
 			</div>
