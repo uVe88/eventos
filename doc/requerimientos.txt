@@ -1,0 +1,52 @@
+PRACTICA 1
+----------
+
+NOK - Logo		- (vgg: hace la imagen, lvsp: pone la imagen)
+OK 	- Login 	- (lr: hace login)
+OK	- Buscador	- (lr: buscar)
+OK	- Registro	- (lr: registro)
+NOK	- Plantilla eventos en public	- (lvsp: hacer plantilla y meterla en la vista index.html)
+NOK	- Detalle de vento (evento.html)	- lvsp
+NOK	- Registro (registro.html)			- lvsp
+NOK	- Registro OK (registro_ok.html)	- lvsp
+
+PRACTICA 2
+----------
+
+NOK	- Login (peticion a api/login con ajax enviando login y password y ocultar formulario si ha ido bien y mostrar info de usuario)
+NOK	- Logout (mostrar boton logout cuando este logeado y hacer peticion a api/logout)
+NOK	- Comprobar login (evento onload)
+NOK	- Mapa (mostrar eventos en el mapa)
+NOK	- Implementar busqueda de eventos (peticion a api/eventos/buscar)
+
+OPCIONAL
+
+NOK	- Crear evento
+NOK	- Mostrar resultado de busqueda en mapa (poder elegir entre modo texto o mapa)
+
+PRACTICA 3 (JQUERY)
+-------------------
+
+NOK	- Suscripcion de eventos (mostrar "Suscribir" si no está suscrito y "Eliminar suscripcion" si está suscrito. Todo ello si está logeado)
+NOK	- Feeds (crear feeds.html para mostrar ultimos comentarios de todos los eventos. Ponser enlace en index.html a esta página si el usuario está logeado)
+
+OPCIONAL
+
+NOK	- Crear comentario (boton en detalle de evento si el usuario está logeado y suscrito al evento)
+NOK	- Responder comentario (añadir boton responder en cada comentario. Poder citar el comentario añadiendo el texto del mismo en un formato especial)
+
+PRACTICA 4
+----------
+
+NOK	- Pantalla eventos populares
+NOK	- Pantalla login
+NOK	- Pantalla detalle evento
+NOK	- Pantlla mapa (se accede desde detalle evento)
+NOK	- Pantall Feeds
+
+OPCIONAL
+
+Búsqueda de eventos
+Creación de eventos
+Creación de comentarios
+Respuesta a comentarios
