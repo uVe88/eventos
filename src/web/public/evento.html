@@ -38,79 +38,48 @@
 			</div><!-- /.container-fluid -->
 		</nav>
 		<div class="container">
-			<div class="row">
-				<div class="col-md-4">
-					<div class="well">
-						<form class="form-horizontal">
-							<div class="form-group">
-								<label for="inputEmail3" class="col-sm-3 control-label">Email</label>
-								<div class="col-sm-9">
-									<input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="inputPassword3" class="col-sm-3 control-label">Password</label>
-								<div class="col-sm-9">
-									<input type="password" class="form-control" id="inputPassword3" placeholder="Password">
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-offset-3 col-sm-9">
-									<button type="submit" class="btn btn-default">Acceder</button>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-				<div class="col-md-8">
-					<div class="well">
-						<form action="iniciarRegistro.html">
-							<h1>¿No tienes cuenta? </h1>
-
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-							<div class="form-group">
-								<div>
-									<button type="submit" class="btn btn-default">¡Regístrate!</button>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-			{{#eventos}}
 			<div class="row well">
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<a href="#" class="thumbnail">
-						<img src="img/eventos/{{id}}.jpg" alt="">
+						<img src="img/eventos/{{id}}_g.jpg" alt="">
 					</a>
 				</div>
-				<div class="col-md-10">
+				<div class="col-md-9">
 					<h2>{{{titulo}}}</h2>
-					<p>{{resumen}}</p>
+					{{{descripcion_par}}}
 					<p>
-						<span class="label label-info">{{poblacion}}</span>
 						<span class="label label-info">{{fecha_cad}} {{hora_cad}}</span>
 					</p>
-
 					<div class="row">
-						<div class="col-md-10">
-						  {{#entradas_agotadas}}
+						<div class="col-md-12">
+							{{#entradas_agotadas}}
 							<div class="alert alert-danger" role="alert">
 								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 								<span class="sr-only">Error:</span>
 								¡Entradas agotadas!
 							</div>
-						  {{/entradas_agotadas}}
+							{{/entradas_agotadas}}
+							{{^entradas_agotadas}}
+							<div class="alert alert-success" role="alert">
+								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								<span class="sr-only">Error:</span>
+								Quedan {{entradas_disponibles }}
+							</div>
+							{{/entradas_agotadas}}
 						</div>
-						<div class="col-md-2">
-							<form action="obtenerEvento?id={{id}}>
-								<button type="submit" class="btn btn-primary btn-lg">Ver detalles</button>
-							</form>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<h3>Datos de ubicación del evento</h3>
+							<p>
+								<span class="label label-info">{{poblacion}}</span>
+								<span class="label label-info">{{lugar}}</span>
+							</p>
+							<img src="images/map.png" alt="" style="width: 100%;">
 						</div>
 					</div>
 				</div>
 			</div>
-			{{/eventos}}
 		</div>
 	</body>
 </html>
