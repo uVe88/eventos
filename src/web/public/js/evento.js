@@ -5,7 +5,7 @@ var appEventos = appEventos || {};
 appEventos.eventoModule = {};
 
 // Propiedad que define el número de elementos a mostrar en una página de resultado de eventos
-appEventos.eventoModule.pageSize = 4;
+appEventos.eventoModule.pageSize = 10;
 
 // Template para renderizar un evento
 appEventos.eventoModule.eventoTemplate = '<div class="row well">' +
