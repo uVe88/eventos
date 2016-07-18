@@ -3,13 +3,10 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Event planners</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 		<!-- Optional theme -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-		<!-- Latest compiled and minified JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-default">
@@ -41,109 +38,81 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="well">
+						{{#errores}}
 						<form class="form-horizontal" action="registrarUsuario" method="post">		
 							<div class="form-group">
 								<label for="login" class="col-sm-3 control-label">Login</label>
 								<div class="col-sm-9">
-									<input type="text" class="form-control" id="login" name="login" placeholder="Login">
+									<input type="text" class="form-control" id="login" name="login" placeholder="Login" required>
+									{{#login}}
+										<p class="text-danger">{{login}}</p>
+									{{/login}}
 								</div>
 							</div>
-							{{#errores}}
-								{{#login}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								{{login}}
-							</div>
-								{{/login}}
-							{{/errores}}
+							
 							<div class="form-group">
 								<label for="password" class="col-sm-3 control-label">Password</label>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+									<input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="password2" class="col-sm-3 control-label">Password2</label>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" id="password2" name="password2" placeholder="Password2">
+									<input type="password" class="form-control" id="password2" name="password2" placeholder="Password2" required>
+									{{#password}}
+										<p class="text-danger">{{password}}</p>
+									{{/password}}
 								</div>
 							</div>
-							{{#errores}}
-								{{#password}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								{{password}}
-							</div>
-								{{/password}}
-							{{/errores}}
+							
 							<div class="form-group">
 								<label for="nombre" class="col-sm-3 control-label">Nombre</label>
 								<div class="col-sm-9">
-									<input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre">
+									<input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+									{{#nombre}}
+										<p class="text-danger">{{nombre}}</p>
+									{{/nombre}}
 								</div>
 							</div>
-							{{#errores}}
-								{{#nombre}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								{{nombre}}
-							</div>
-								{{/nombre}}
-							{{/errores}}
+							
 							<div class="form-group">
 								<label for="apellidos" class="col-sm-3 control-label">Apellidos</label>
 								<div class="col-sm-9">
-									<input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos">
+									<input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos" required>
+									{{#apellidos}}
+										<p class="text-danger">{{apellidos}}</p>
+									{{/apellidos}}
 								</div>
 							</div>
-							{{#errores}}
-								{{#apellidos}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								{{apellidos}}
-							</div>
-								{{/apellidos}}
-							{{/errores}}
+							
 							<div class="form-group">
 								<label for="email" class="col-sm-3 control-label">Email</label>
 								<div class="col-sm-9">
-									<input type="email" class="form-control" id="email" name="email" placeholder="Email">
+									<input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+									{{#email}}
+										<p class="text-danger">{{email}}</p>
+									{{/email}}
 								</div>
 							</div>
-							{{#errores}}
-								{{#email}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								{{email}}
-							</div>
-								{{/email}}
-							{{/errores}}
+							
 							<div class="form-group">
 								<label for="fecha_nacimiento" class="col-sm-3 control-label">Fecha de nacimiento</label>
 								<div class="col-sm-9">
-									<input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" placeholder="Fecha de nacimiento">
+									<input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" placeholder="Fecha de nacimiento" required>
+									{{#fecha_nacimiento}}
+										<p class="text-danger">{{fecha_nacimiento}}</p>
+									{{/fecha_nacimiento}}
 								</div>
 							</div>
-							{{#errores}}
-								{{#fecha_nacimiento}}
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								{{fecha_nacimiento}}
-							</div>
-								{{/fecha_nacimiento}}
-							{{/errores}}
+							
 							<div class="form-group">
 								<div class="col-sm-offset-3 col-sm-9">
 									<button type="submit" class="btn btn-default">Registrar</button>
 								</div>
 							</div>
 						</form>
+						{{/errores}}
 					</div>
 				</div>
 				<div class="col-md-6">

@@ -20,7 +20,7 @@ class Usuario < Sequel::Model
   def validate
     super
     validates_presence [:login, :password, :nombre, :apellidos, :email, :fecha_nacimiento], :message=>'Dato requerido'
-    validates_unique [:login], :message=>'Ya existe un usuario con ese login'
+    validates_unique :login, :message=>'Ya existe un usuario con ese login'
     validates_min_length 6, :password, :message=>proc{|lon| "La longitud mínima es de #{lon} caracteres"}
     validates_format /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :email, :message=>'Formato incorrecto'
   end

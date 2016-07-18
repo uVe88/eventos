@@ -17,7 +17,7 @@ module Services
       u.validate
       errores = u.errors
       if datos[:password] != datos[:password2]
-        mensaje = 'Las contraseñas no coinciden'
+        mensaje = ['Las contraseñas no coinciden']
         if (errores[:password].nil?)
           errores[:password] = mensaje
         else
