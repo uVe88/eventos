@@ -161,6 +161,19 @@ appEventos.loginModule.init = function(){
         btLogout.onclick = appEventos.loginModule.logout;
     }
 
+    // Asignar manejadro de evento para el buscador
+    var btBuscar = document.getElementById("bt_buscar");
+    if (btBuscar != null){
+        btBuscar.onclick = function(event){
+            event = event || window.event;
+
+            var texto = document.getElementById("txt_buscar").value;
+            appEventos.eventoModule.buscar(texto, 1);
+
+            return false;
+        }
+    }
+
     // Pedir información de usuario
     appEventos.loginModule.getInfoUsuario();
 }
