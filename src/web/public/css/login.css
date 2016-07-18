@@ -1,0 +1,4 @@
+.msg_error_login.end{
+    transition: all 1s ease-in-out;
+    opacity: 0;
+}
