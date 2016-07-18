@@ -3,7 +3,7 @@
 require 'sequel'
 require 'date'
 require 'sequel/plugins/serialization'
-
+require 'sequel/plugins/after_initialize'
 
 class Evento < Sequel::Model
   many_to_one :usuario, :key=>:usuario_login
@@ -12,6 +12,7 @@ class Evento < Sequel::Model
 
   plugin :json_serializer
   plugin :validation_helpers
+  plugin :after_initialize
 
   def validate
     super
@@ -20,6 +21,11 @@ class Evento < Sequel::Model
 
   def has_key?(key)
     return true 
+  end
+
+  def after_initialize
+    hash_computed_attrs = { :resumen => resumen, :descripcion_par => descripcion_par, :fecha_cad => fecha_cad, :hora_cad => hora_cad, :entradas_agotadas => entradas_agotadas }
+    self.values.merge!(hash_computed_attrs)
   end
 
   def resumen
