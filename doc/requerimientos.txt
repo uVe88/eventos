@@ -5,19 +5,19 @@ NOK - Logo		- (vgg: hace la imagen, lvsp: pone la imagen)
 OK 	- Login 	- (lr: hace login)
 OK	- Buscador	- (lr: buscar)
 OK	- Registro	- (lr: registro)
-NOK	- Plantilla eventos en public	- (lvsp: hacer plantilla y meterla en la vista index.html)
-NOK	- Detalle de vento (evento.html)	- lvsp
-NOK	- Registro (registro.html)			- lvsp
-NOK	- Registro OK (registro_ok.html)	- lvsp
+OK	- Plantilla eventos en public	- (lvsp: hacer plantilla y meterla en la vista index.html)
+OK	- Detalle de vento (evento.html)	- lvsp
+OK	- Registro (registro.html)			- lvsp
+OK	- Registro OK (registro_ok.html)	- lvsp
 
 PRACTICA 2
 ----------
 
-NOK	- Login (peticion a api/login con ajax enviando login y password y ocultar formulario si ha ido bien y mostrar info de usuario)
-NOK	- Logout (mostrar boton logout cuando este logeado y hacer peticion a api/logout)
-NOK	- Comprobar login (evento onload)
-NOK	- Mapa (mostrar eventos en el mapa)
-NOK	- Implementar busqueda de eventos (peticion a api/eventos/buscar)
+OK	- Login (peticion a api/login con ajax enviando login y password y ocultar formulario si ha ido bien y mostrar info de usuario)
+OK	- Logout (mostrar boton logout cuando este logeado y hacer peticion a api/logout)
+OK	- Comprobar login (evento onload)
+OK	- Mapa (mostrar eventos en el mapa)
+OK	- Implementar busqueda de eventos (peticion a api/eventos/buscar)
 
 OPCIONAL
 
