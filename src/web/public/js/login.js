@@ -1,31 +1,47 @@
+/**
+ * @file Gestionar las funcionalidades asociadas al login
+ * 
+ * @version 1.0
+ * 
+ * @author Iván Gómez Gutiérrez
+ */
 
-// Definir contexto global de aplicación
+/**
+ * Contexto global de la aplicación
+ */
 var appEventos = appEventos || {};
 
-// Definir contexto del módulo de login
-//var appEventos.loginModule = appEventos.appEventos.loginModule || {};
+/**
+ * Contexto del módulo login
+ */
 appEventos.loginModule = {};
 
+/**
+ * Información del usuario conectado
+ * @type {object}
+ */
 appEventos.loginModule.infoUsuario = null;
 
+/**
+ * Template de mensaje de error de autenticación
+ * @type {string}
+ */
 appEventos.loginModule.errorLoginTemplate = '<div class="alert alert-danger msg_error_login">' +
                                     'Autentificación fallida' +
                                     '</div>';
 
-// Funcion para hacer login en la aplicación
-appEventos.loginModule.login = function(event){
-    event = event || window.event;
-
+/**
+ * Hacer login en la aplicación
+ * @param  {string} login
+ * @param  {boolean} password
+ */
+appEventos.loginModule.login = function(login, password){
     // Instanciar petición
     var req = new XMLHttpRequest();
     req.open('POST', 'api/login', true);
     req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     req.onreadystatechange = loginCallback;
     
-    // Obtener datos del formulario
-    var login = document.getElementById("login").value;
-    var password = document.getElementById("password").value;
-
     // Construir objeto a enviar a servidor
     var data = new Object();
     data.login = login;
@@ -42,28 +58,7 @@ appEventos.loginModule.login = function(event){
                 appEventos.loginModule.renderInfoLogin();
             }
             else if(req.status == 401){
-                // Se añade el mensaje al dom
-                var formLogin = document.getElementById("form_login");
-                formLogin.innerHTML += appEventos.loginModule.errorLoginTemplate;
-                
-                // Asignar manejador de evento para detectar el fin de la transición y eliminar el elemento del dom
-                var mensajes = document.getElementsByClassName("msg_error_login");
-                for (i = 0; i < mensajes.length; i++) {
-                    mensajes[i].addEventListener('transitionend', onTransitionEnd, false);
-                }
-
-                // Creamos un temporizador que a los 3 segundos activa la transición
-                window.setTimeout(function() {
-                    var mensajes = document.getElementsByClassName("msg_error_login");
-                    for (i = 0; i < mensajes.length; i++) {
-                        mensajes[i].classList.add("end");
-                    }
-                }, 3000);
-                
-                // Método que elimina un mensaje de error del formulario
-                function onTransitionEnd() {
-                    formLogin.removeChild(this);
-                }
+                appEventos.loginModule.renderErrorLogin();
             }
         }
     }
@@ -71,6 +66,9 @@ appEventos.loginModule.login = function(event){
     return false;
 }
 
+/**
+ * Hacer logout en la aplicación
+ */
 appEventos.loginModule.logout = function(){
     // Instanciar petición
     var req = new XMLHttpRequest();
@@ -91,11 +89,17 @@ appEventos.loginModule.logout = function(){
     }
 };
 
+/**
+ * Comprobar si hay algún usuario logeado
+ */
 appEventos.loginModule.logeado = function(){
     appEventos.loginModule.getInfoUsuario();
     return appEventos.loginModule.infoUsuario != null;
 };
 
+/**
+ * Obtiene la información del usuario logeado y la almacena en la propiedad infoUsuario
+ */
 appEventos.loginModule.getInfoUsuario = function(){
     if (appEventos.loginModule.infoUsuario == null){
         // Instanciar petición
@@ -118,6 +122,9 @@ appEventos.loginModule.getInfoUsuario = function(){
     }
 }
 
+/**
+ * Modifica el aspecto de las vistas dependiendo de si el usuario está logeado o no 
+ */
 appEventos.loginModule.renderInfoLogin = function(){
     var formLoginContainer = document.getElementById("form_login_container");
     var infoUsuarioContainer = document.getElementById("info_usuario");
@@ -148,17 +155,62 @@ appEventos.loginModule.renderInfoLogin = function(){
     }
 }
 
-appEventos.loginModule.init = function(){
-    // Asignar manejador de evento para login
+/**
+ * Muestra un mensaje de error de autenticación
+ */
+appEventos.loginModule.renderErrorLogin = function(){
+    // Se añade el mensaje al dom
     var formLogin = document.getElementById("form_login");
     if (formLogin != null){
-        formLogin.onsubmit = appEventos.loginModule.login;
+        formLogin.innerHTML += appEventos.loginModule.errorLoginTemplate;
+    
+        // Asignar manejador de evento para detectar el fin de la transición y eliminar el elemento del dom
+        var mensajes = document.getElementsByClassName("msg_error_login");
+        for (i = 0; i < mensajes.length; i++) {
+            mensajes[i].addEventListener('transitionend', onTransitionEnd, false);
+        }
+
+        // Creamos un temporizador que a los 3 segundos activa la transición
+        window.setTimeout(function() {
+            var mensajes = document.getElementsByClassName("msg_error_login");
+            for (i = 0; i < mensajes.length; i++) {
+                mensajes[i].classList.add("end");
+            }
+        }, 3000);
+        
+        // Método que elimina un mensaje de error del formulario
+        function onTransitionEnd() {
+            formLogin.removeChild(this);
+        }
+    }
+}
+
+/**
+ * Realiza las operaciones pertinentes al inicializar el modulo login
+ */
+appEventos.loginModule.init = function(){
+    // Asignar manejador de evento para login
+    var btLogin = document.getElementById("bt_login");
+    if (btLogin != null){
+        btLogin.onclick = function(event){
+            event = event || window.event;
+
+            var login = document.getElementById("txt_login").value;
+            var password = document.getElementById("txt_password").value;
+            appEventos.loginModule.login(login, password);
+
+            return false;
+        }
     }
 
     // Asignar manejador de evento para logout
     var btLogout = document.getElementById("logout");
     if (btLogout != null){
-        btLogout.onclick = appEventos.loginModule.logout;
+        btLogout.onclick = function(event){
+            event = event || window.event;
+
+            appEventos.loginModule.logout();
+        } 
     }
 
     // Asignar manejadro de evento para el buscador
