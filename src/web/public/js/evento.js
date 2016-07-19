@@ -22,6 +22,17 @@ appEventos.eventoModule = {};
  */ 
 appEventos.eventoModule.pageSize = 5;
 
+/**
+ * evento seleccionado
+ * @type {number}
+ */
+appEventos.eventoModule.idEventoActual = null;
+
+/**
+ * indica si el usuario está suscrito al evento actual o no
+ * @type {bool}
+ */
+appEventos.eventoModule.suscrito = false;
 
 /**
  * Template para renderizar un evento
@@ -58,7 +69,23 @@ appEventos.eventoModule.eventoEntradasAgotadasTemplate = '<div class="col-md-10"
                                                          '  </div>' +
                                                          '</div>';
 
+/**
+ * Template para suscribirse a evento
+ * @type {string}
+ */
+appEventos.eventoModule.suscribirEventoTemplate = '<button type="button" id="bt_suscribir" class="btn btn-success btn-xs pull-right suscripcion">Suscribir</button>';
 
+/**
+ * Template para eliminar suscripción a evento
+ * @type {string}
+ */
+appEventos.eventoModule.eliminarSuscripcionTemplate = '<button type="button" id="bt_eliminar_suscripcion" class="btn btn-danger btn-xs pull-right suscripcion">Eliminar suscripción</button>';
+
+/**
+ * Template para mensaje de error en suscripcion
+ * @type {string}
+ */
+appEventos.eventoModule.errorSuscripcionTemplate = '<div class="alert alert-danger msg_error"></div>';
 
 /**
  * Buscar eventos en servidor
@@ -71,7 +98,7 @@ appEventos.eventoModule.buscar = function(texto, pagina){
 
     // Instanciar petición
     var req = new XMLHttpRequest();
-    req.open('GET', 'api/eventos/buscar' + parameters, true);
+    req.open('GET', '/eventos/api/eventos/buscar' + parameters, true);
     req.onreadystatechange = buscarCallback;
     
     // Realizar petición
@@ -111,6 +138,7 @@ appEventos.eventoModule.renderizarResultadoBusqueda = function(total, eventos, t
     // Construir elementos evento
     for (i = 0; i < eventos.length; i++) {
         var htmlEvento = appEventos.eventoModule.eventoTemplate;
+        htmlEvento = htmlEvento.toString().replace("{{id}}", eventos[i].id);
         htmlEvento = htmlEvento.toString().replace("{{titulo}}", eventos[i].titulo);
         htmlEvento = htmlEvento.toString().replace("{{resumen}}", eventos[i].resumen);
         htmlEvento = htmlEvento.toString().replace("{{poblacion}}", eventos[i].poblacion);
@@ -208,4 +236,153 @@ appEventos.eventoModule.localizarEvento = function(lat, lon, descripcion){
     marker.addListener('click', function() {
         infowindow.open(mapa, marker);
     });
+}
+
+/**
+ * Comprueba si el usuario está suscrito al evento actual
+ */
+appEventos.eventoModule.estaSuscrito = function(){
+    var parameters = "?id_evento=" + appEventos.eventoModule.idEventoActual;
+
+    $.get('/eventos/api/usuarioActual/suscrito_a' + parameters, function(data, textStatus, req){
+        if (data === "si"){
+            appEventos.eventoModule.suscrito = true;
+        }
+        else{
+            appEventos.eventoModule.suscrito = false;
+        }
+        appEventos.eventoModule.renderizarSuscripcion(appEventos.eventoModule.suscrito);
+    });
+    
+    return false;
+}
+
+/**
+ * Crear suscripción a un evento para un usuario
+ * @param  {number} id_evento
+ * @param  {string} login_usuario
+ */
+appEventos.eventoModule.suscribir = function(id_evento, login_usuario){
+    var parameters = {
+        id_evento: id_evento,
+        login_usuario: login_usuario
+    };
+    $.post("/eventos/api/usuarioActual/suscripciones", JSON.parse(JSON.stringify(parameters)), function(data, textStatux, req){
+        appEventos.eventoModule.suscrito = true;
+        appEventos.eventoModule.renderizarSuscripcion(true);
+    }).fail(function(){
+        appEventos.eventoModule.renderizarErrorSuscripcion("Se ha producido un error al intentar suscribirse del evento, por favor intentelo de nuevo más tarde.");
+    });
+}
+
+/**
+ * Eliminar suscripción de un evento para un usuario
+ * @param  {number} id_evento
+ * @param  {string} login_usuario
+ */
+appEventos.eventoModule.desuscribir = function(id_evento, login_usuario){
+    var parameters = {
+        id_evento: id_evento,
+        login_usuario: login_usuario
+    };
+    var json_data = JSON.parse(JSON.stringify(parameters));
+    $.ajax({
+        url: "/eventos/api/usuarioActual/suscripciones",
+        type: "DELETE",
+        dataType: "json",
+        data: json_data,
+        success: function(data, textStatux, req){
+            appEventos.eventoModule.suscrito = false;
+            appEventos.eventoModule.renderizarSuscripcion(false);
+        },
+        error: function(req, textStatus, errorThrown){
+            if (req.status == 200){
+                appEventos.eventoModule.suscrito = false;
+                appEventos.eventoModule.renderizarSuscripcion(false);
+            }
+            else{
+                appEventos.eventoModule.renderizarErrorSuscripcion("Se ha producido un error al intentar desuscribirse del evento, por favor intentelo de nuevo más tarde.");
+            }
+        }
+    });
+}
+
+/**
+ * Muestra u oculta el botón de suscripción al evento
+ * @param  {bool} suscrito
+ */
+appEventos.eventoModule.renderizarSuscripcion = function(suscrito){
+    // Eliminar botones de suscripción
+    var infoFechaElement = $("#detalle_info_fecha");
+    if (infoFechaElement.length > 0){
+        $(".suscripcion").remove();
+    }
+    
+    if (suscrito !== undefined){
+        // Añadir boton
+        var infoFechaElement = $("#detalle_info_fecha");
+        if (infoFechaElement.length > 0){
+            var suscripcionElement = "";
+            if (suscrito === true){ // Mostrar botón de suscripción
+                // Añadir al dom
+                suscripcionElement = $(appEventos.eventoModule.eliminarSuscripcionTemplate);
+                suscripcionElement.prependTo("#detalle_info_fecha");
+                // Asignar manejador de evento
+                $(".suscripcion").click(function(event){
+                    var id_evento = appEventos.eventoModule.idEventoActual;
+                    var login_usuario = appEventos.loginModule.infoUsuario.login;
+                    appEventos.eventoModule.desuscribir(id_evento, login_usuario);
+                });
+            }
+            else{ // Mostrar botón eliminar suscripcion
+                // Añadir al dom
+                suscripcionElement = $(appEventos.eventoModule.suscribirEventoTemplate);
+                suscripcionElement.prependTo("#detalle_info_fecha");
+                // Asignar manejador de evento
+                $(".suscripcion").click(function(event){
+                    var id_evento = appEventos.eventoModule.idEventoActual;
+                    var login_usuario = appEventos.loginModule.infoUsuario.login;
+                    appEventos.eventoModule.suscribir(id_evento, login_usuario);
+                });
+            }
+        }
+    }
+}
+
+/**
+ * Muestra el mensaje de error al intentar suscribirse a un método
+ * @param  {string} mensaje
+ */
+appEventos.eventoModule.renderizarErrorSuscripcion = function(mensaje){
+    // Añadir mensaje al dom
+    var mensajeElement = $(appEventos.eventoModule.errorSuscripcionTemplate);
+    mensajeElement.html(mensaje);
+    mensajeElement.appendTo($("body"));
+    
+    // Activar animación de entrada del elemento
+    $(".msg_error").animate({
+        opacity: 1
+    }, 1000);
+
+    // Activar animación de salida del elemento
+    window.setTimeout(function(){
+        $(".msg_error").animate({
+            opacity: 0
+        }, 1000).promise().done(function(){
+            $(".msg_error").remove();
+        });
+    }, 3000);
+}
+
+/**
+ * Inicializa la vista de detalle de un evento
+ * @param  {number} id_event
+ * @param  {number} lat
+ * @param  {number} lon
+ * @param  {number} titulo
+ */
+appEventos.eventoModule.init = function(id_evento, lat, lon, titulo){
+    appEventos.eventoModule.idEventoActual = id_evento;
+    appEventos.eventoModule.localizarEvento(lat, lon, titulo);
+    appEventos.eventoModule.estaSuscrito();
 }

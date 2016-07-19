@@ -38,7 +38,7 @@ appEventos.loginModule.errorLoginTemplate = '<div class="alert alert-danger msg_
 appEventos.loginModule.login = function(login, password){
     // Instanciar petición
     var req = new XMLHttpRequest();
-    req.open('POST', 'api/login', true);
+    req.open('POST', '/eventos/api/login', true);
     req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     req.onreadystatechange = loginCallback;
     
@@ -72,7 +72,7 @@ appEventos.loginModule.login = function(login, password){
 appEventos.loginModule.logout = function(){
     // Instanciar petición
     var req = new XMLHttpRequest();
-    req.open('GET', 'api/logout', true);
+    req.open('GET', '/eventos/api/logout', true);
     req.onreadystatechange = logoutCallback;
     
     // Realizar petición
@@ -104,7 +104,7 @@ appEventos.loginModule.getInfoUsuario = function(){
     if (appEventos.loginModule.infoUsuario == null){
         // Instanciar petición
         var req = new XMLHttpRequest();
-        req.open('GET', 'api/usuarioActual', true);
+        req.open('GET', '/eventos/api/usuarioActual', true);
         req.onreadystatechange = getInfoUsuarioCallback;
         
         // Realizar petición
@@ -129,7 +129,7 @@ appEventos.loginModule.renderInfoLogin = function(){
     var formLoginContainer = document.getElementById("form_login_container");
     var infoUsuarioContainer = document.getElementById("info_usuario");
 
-    if (appEventos.loginModule.infoUsuario != null){
+    if (appEventos.loginModule.logeado()){
         // Ocultar formulario login
         if (formLoginContainer != null){
             formLoginContainer.classList.add("hidden");
@@ -141,6 +141,9 @@ appEventos.loginModule.renderInfoLogin = function(){
             var nombreUsuario = document.getElementById("nombre_usuario");
             nombreUsuario.innerHTML = appEventos.loginModule.infoUsuario.nombre;
         }
+
+        // Mostrar suscripción
+        appEventos.eventoModule.renderizarSuscripcion(appEventos.eventoModule.suscrito);
     }
     else{
         // Mostrar formulario login
@@ -152,6 +155,9 @@ appEventos.loginModule.renderInfoLogin = function(){
         if (infoUsuarioContainer != null){
             infoUsuarioContainer.classList.add("hidden");
         }
+
+        // Ocultar suscripción
+        appEventos.eventoModule.renderizarSuscripcion();
     }
 }
 
@@ -230,5 +236,7 @@ appEventos.loginModule.init = function(){
     appEventos.loginModule.getInfoUsuario();
 }
 
-// Iniciar comportamiento javascript
-appEventos.loginModule.init();
+jQuery(document).ready(function() {
+  // Iniciar comportamiento javascript
+    appEventos.loginModule.init();
+});
