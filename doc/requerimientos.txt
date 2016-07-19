@@ -27,7 +27,7 @@ NOK	- Mostrar resultado de busqueda en mapa (poder elegir entre modo texto o map
 PRACTICA 3 (JQUERY)
 -------------------
 
-NOK	- Suscripcion de eventos (mostrar "Suscribir" si no está suscrito y "Eliminar suscripcion" si está suscrito. Todo ello si está logeado)
+OK	- Suscripcion de eventos (mostrar "Suscribir" si no está suscrito y "Eliminar suscripcion" si está suscrito. Todo ello si está logeado)
 NOK	- Feeds (crear feeds.html para mostrar ultimos comentarios de todos los eventos. Ponser enlace en index.html a esta página si el usuario está logeado)
 
 OPCIONAL
