@@ -22,6 +22,7 @@ var eventos_populares = function(){
 			
 			// refrescar el listview
 			$( "#populares .ui-content" ).listview( "refresh" );
+			
 		},
 		function( data ) {
 			alert( data + ", you fail this time" );
@@ -35,7 +36,7 @@ var detalle_evento = function(id_evento){
 			// Origen y destino de datos
 			var arr_from_data = JSON.parse( data );
 
-			// Renderizado
+			// Renderizado del contenido
 			var html = '';
 			html += '<img src="img/eventos/'+arr_from_data.id+'_g.jpg" style="width: 100%;">';
 			html += '<h2>'+arr_from_data.titulo+'</h2>';
@@ -56,20 +57,25 @@ var detalle_evento = function(id_evento){
 			html += '<p><b>resumen</b>: '+arr_from_data.resumen+'</p>';
 			html += '<p><b>usuario_login</b>: '+arr_from_data.usuario_login+'</p>';
 			html += '<p><b>visitas</b>: '+arr_from_data.visitas+'</p>';
-			
-			html += '<div data-role="footer" data-position="fixed">';
-			html += '	<a href="#populares" data-rel="back" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">Volver</a>';
-			if(arr_from_data.geolocalizado == true){
-				html += '<a href="javascript:mapa_evento('+arr_from_data.id+')" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">Mapa de evento</a>';
-			}
-			html += '	<a href="javascript:suscribir('+arr_from_data.id+')" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">Suscribir</a>';
-			html += '	<a href="javascript:eliminar_suscripcion('+arr_from_data.id+')" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">Eliminar suscripción</a>';
-			html += '</div>';
-			
-			// Asignar el contenido al listviewe
+
+			// Asignar el contenido al contenido
 			$( "#detalles .ui-content" ).html(html);
+
+			// Renderizado del footer
+			var footer = '<div data-id="mainTab" data-role="navbar"><ul id="footer_tabs">';
+			footer += '	<li><a href="#populares" data-transition="slide">Volver</a></li>';
+			if(arr_from_data.geolocalizado == true){
+				footer += '<li><a href="javascript:mapa_evento('+arr_from_data.id+')" data-transition="slide">Mapa de evento</a></li>';
+			}
+			footer += '	<li><a href="javascript:suscribir('+arr_from_data.id+')" data-transition="slide">Suscribir</a></li>';
+			footer += '	<li><a href="javascript:eliminar_suscripcion('+arr_from_data.id+')" data-transition="slide">Eliminar suscripción</a></li>';
+			footer += '</ul></div>';
+		
+			// Asignar el contenido al footer
+			$('#detalles [data-role="footer"]').html(footer).trigger('create');			
 			
-			$.mobile.pageContainer.pagecontainer("change", "#detalles")
+			$.mobile.pageContainer.pagecontainer("change", "#detalles");
+
 		},
 		function( data ) {
 			alert( data + ", you fail this time" );
@@ -89,10 +95,19 @@ var mapa_evento = function(id_evento){
 			
 			// Asignar el contenido al listviewe
 			$( "#mapamovil .ui-content" ).html(html);
-			$.mobile.pageContainer.pagecontainer("change", "#mapamovil")
+			
+			// Renderizado del footer
+			var footer = '<div data-id="mainTab" data-role="navbar"><ul id="footer_tabs">';
+			footer += '	<li><a href="#detalles" data-transition="slide">Volver</a></li>';
+			footer += '</ul></div>';
+		
+			// Asignar el contenido al footer
+			$('#mapamovil [data-role="footer"]').html(footer).trigger('create');		
+			
+			$.mobile.pageContainer.pagecontainer("change", "#mapamovil");
+			
+			// Cargar el mapa
 			appEventos.eventoModule.localizarEvento(arr_from_data.lat, arr_from_data.lon, arr_from_data.titulo);
-			
-			
 		},
 		function( data ) {
 			alert( data + ", you fail this time" );
