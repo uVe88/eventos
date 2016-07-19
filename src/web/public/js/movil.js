@@ -85,14 +85,14 @@ var mapa_evento = function(id_evento){
 
 			// Renderizado
 			var html = '';
-			html += '<div id="mapa" style="width: 100%; height: 100px;"></div>';	
+			html += '<div id="mapa" style="width: 100%; height: 500px;"></div>';	
 			
 			// Asignar el contenido al listviewe
-			$( "#mapa .ui-content" ).html(html);
+			$( "#mapamovil .ui-content" ).html(html);
+			$.mobile.pageContainer.pagecontainer("change", "#mapamovil")
+			appEventos.eventoModule.localizarEvento(arr_from_data.lat, arr_from_data.lon, arr_from_data.titulo);
 			
-			//appEventos.eventoModule.localizarEvento(arr_from_data.lat, arr_from_data.lon, arr_from_data.titulo);
 			
-			$.mobile.pageContainer.pagecontainer("change", "#mapa")
 		},
 		function( data ) {
 			alert( data + ", you fail this time" );
