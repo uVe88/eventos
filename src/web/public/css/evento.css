@@ -10,3 +10,8 @@
     z-index: 1000;
     opacity: 0;
 }
+
+.mi-comentario{
+    font-style: italic;
+    color: #FAAC58;
+}

@@ -87,6 +87,12 @@ appEventos.eventoModule.eliminarSuscripcionTemplate = '<button type="button" id=
  */
 appEventos.eventoModule.errorSuscripcionTemplate = '<div class="alert alert-danger msg_error"></div>';
 
+appEventos.eventoModule.feedTemplate = '<div class="media">' +
+                                       '    <div class="media-body">' +
+                                       '        <h4 class="media-heading"> - <small></small></h4>' +
+                                       '    </div>' +
+                                       '</div>';
+
 /**
  * Buscar eventos en servidor
  * @param  {string} texto
@@ -214,28 +220,33 @@ appEventos.eventoModule.renderizarResultadoBusqueda = function(total, eventos, t
  * @param  {string} descripcion
  */
 appEventos.eventoModule.localizarEvento = function(lat, lon, descripcion){
-    // Instanciar mapa
-    var mapa = new google.maps.Map(document.getElementById("mapa"), {
-        center: {lat: lat, lng: lon},
-        zoom: 12
-    });
+    if ((lat === null) || (lat === '') || (lon === null) || (lon === '')){
+        console.warn("No se puede localizar el evento porque las cooredenadas son incorrectas");
+    }
+    else{
+        // Instanciar mapa
+        var mapa = new google.maps.Map(document.getElementById("mapa"), {
+            center: {lat: lat, lng: lon},
+            zoom: 12
+        });
 
-    // Añadir chincheta
-    var marker = new google.maps.Marker({
-        position: {lat: lat, lng: lon},
-        map: mapa,
-        title: descripcion
-    });
+        // Añadir chincheta
+        var marker = new google.maps.Marker({
+            position: {lat: lat, lng: lon},
+            map: mapa,
+            title: descripcion
+        });
 
-    // Instanciar un caja de información del evento
-    var infowindow = new google.maps.InfoWindow({
-        content: descripcion
-    });
+        // Instanciar un caja de información del evento
+        var infowindow = new google.maps.InfoWindow({
+            content: descripcion
+        });
 
-    // Asignar manejador de evento click sobre la chincheta para que se muestre la información del evento
-    marker.addListener('click', function() {
-        infowindow.open(mapa, marker);
-    });
+        // Asignar manejador de evento click sobre la chincheta para que se muestre la información del evento
+        marker.addListener('click', function() {
+            infowindow.open(mapa, marker);
+        });
+    }
 }
 
 /**
@@ -253,8 +264,6 @@ appEventos.eventoModule.estaSuscrito = function(){
         }
         appEventos.eventoModule.renderizarSuscripcion(appEventos.eventoModule.suscrito);
     });
-    
-    return false;
 }
 
 /**
@@ -267,7 +276,7 @@ appEventos.eventoModule.suscribir = function(id_evento, login_usuario){
         id_evento: id_evento,
         login_usuario: login_usuario
     };
-    $.post("/eventos/api/usuarioActual/suscripciones", JSON.parse(JSON.stringify(parameters)), function(data, textStatux, req){
+    $.post("/eventos/api/usuarioActual/suscripciones", $.parseJSON(JSON.stringify(parameters)), function(data, textStatux, req){
         appEventos.eventoModule.suscrito = true;
         appEventos.eventoModule.renderizarSuscripcion(true);
     }).fail(function(){
@@ -285,7 +294,7 @@ appEventos.eventoModule.desuscribir = function(id_evento, login_usuario){
         id_evento: id_evento,
         login_usuario: login_usuario
     };
-    var json_data = JSON.parse(JSON.stringify(parameters));
+    var json_data = $.parseJSON(JSON.stringify(parameters));
     $.ajax({
         url: "/eventos/api/usuarioActual/suscripciones",
         type: "DELETE",
@@ -372,6 +381,80 @@ appEventos.eventoModule.renderizarErrorSuscripcion = function(mensaje){
             $(".msg_error").remove();
         });
     }, 3000);
+}
+
+/**
+ * Obtener feed del usuario actual
+ */
+appEventos.eventoModule.obtenerFeed = function(){
+    
+    $.get('/eventos/api/usuarioActual/feed', function(data, textStatus, req){
+        var comentarios = $.parseJSON(data);
+
+        // Obtener los eventos
+        var current_id = null;
+        var arrayDef = new Array();
+        $.each(comentarios, function(index, value){
+             if (current_id != value.evento_id){
+                 var def = $.Deferred();
+                 arrayDef.push(def);
+                 current_id = value.evento_id;
+                 getEvento(value.evento_id, def);
+             }
+        });
+
+        // Cuando tengo todos los eventos relleno el titulo en los comentarios
+        $.when.apply($,arrayDef).then(function() {
+            var eventos=arguments;
+            
+            $.each(eventos, function(index, evento){
+                var comentarios_evento = $.grep(comentarios, function(comentario, index){
+                    return  comentario.evento_id == evento.id;
+                });
+                evento.comentarios = comentarios_evento;
+            });
+            
+            // Renderizar los eventos con comentarios
+            var login_usuario_actual = appEventos.loginModule.infoUsuario.login;
+            appEventos.eventoModule.renderizarFeed(eventos, login_usuario_actual);
+        });
+    });
+
+    // Función auxiliar para obtener un evento
+    function getEvento(id_evento, def){
+        $.get('/eventos/api/eventos/' + id_evento, function(data, textStatus, req){
+            var evento = $.parseJSON(data);
+            def.resolve(evento);
+        });
+    }
+}
+
+/**
+ * Renderizar feed del usuario actual
+ * @param  {array} eventos - Eventos que contienen un array de comentarios
+ */
+appEventos.eventoModule.renderizarFeed = function(eventos, login_usuario_actual){
+    var feedContainer = $(".container #feed_container");
+
+    // Limpiar container
+    feedContainer.html("");
+
+    $.each(eventos, function(index, evento){
+        // Pintar cabecera de evento
+        $("#feed_container").append("<h3>" + evento.titulo + "</h3>");
+
+        // Pintar comentarios
+        $.each(evento.comentarios, function(index, comentario){
+            var element = $(appEventos.eventoModule.feedTemplate);
+            element.find(".media-heading").prepend(comentario.usuario_login);
+            element.find(".media-heading small").append(comentario.fecha_hora);
+            if (login_usuario_actual == comentario.usuario_login){
+                element.find(".media-heading").addClass("mi-comentario");
+            }
+            element.append(comentario.texto);
+            element.appendTo(feedContainer);
+        });
+    });
 }
 
 /**

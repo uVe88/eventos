@@ -158,6 +158,9 @@ appEventos.loginModule.renderInfoLogin = function(){
 
         // Ocultar suscripción
         appEventos.eventoModule.renderizarSuscripcion();
+
+        // Quitar feed
+        appEventos.eventoModule.renderizarFeed(null, "");
     }
 }
 
