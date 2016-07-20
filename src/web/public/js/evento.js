@@ -71,7 +71,7 @@ appEventos.eventoModule.buscar = function(texto, pagina){
 
     // Instanciar petición
     var req = new XMLHttpRequest();
-    req.open('GET', 'api/eventos/buscar' + parameters, true);
+    req.open('GET', '/eventos/api/eventos/buscar' + parameters, true);
     req.onreadystatechange = buscarCallback;
     
     // Realizar petición
@@ -111,6 +111,7 @@ appEventos.eventoModule.renderizarResultadoBusqueda = function(total, eventos, t
     // Construir elementos evento
     for (i = 0; i < eventos.length; i++) {
         var htmlEvento = appEventos.eventoModule.eventoTemplate;
+        htmlEvento = htmlEvento.toString().replace("{{id}}", eventos[i].id);
         htmlEvento = htmlEvento.toString().replace("{{titulo}}", eventos[i].titulo);
         htmlEvento = htmlEvento.toString().replace("{{resumen}}", eventos[i].resumen);
         htmlEvento = htmlEvento.toString().replace("{{poblacion}}", eventos[i].poblacion);
@@ -186,26 +187,31 @@ appEventos.eventoModule.renderizarResultadoBusqueda = function(total, eventos, t
  * @param  {string} descripcion
  */
 appEventos.eventoModule.localizarEvento = function(lat, lon, descripcion){
-    // Instanciar mapa
-    var mapa = new google.maps.Map(document.getElementById("mapa"), {
-        center: {lat: lat, lng: lon},
-        zoom: 12
-    });
+    if ((lat === null) || (lat === '') || (lon === null) || (lon === '')){
+        console.warn("No se puede localizar el evento porque las cooredenadas son incorrectas");
+    }
+    else{
+        // Instanciar mapa
+        var mapa = new google.maps.Map(document.getElementById("mapa"), {
+            center: {lat: lat, lng: lon},
+            zoom: 12
+        });
 
-    // Añadir chincheta
-    var marker = new google.maps.Marker({
-        position: {lat: lat, lng: lon},
-        map: mapa,
-        title: descripcion
-    });
+        // Añadir chincheta
+        var marker = new google.maps.Marker({
+            position: {lat: lat, lng: lon},
+            map: mapa,
+            title: descripcion
+        });
 
-    // Instanciar un caja de información del evento
-    var infowindow = new google.maps.InfoWindow({
-        content: descripcion
-    });
+        // Instanciar un caja de información del evento
+        var infowindow = new google.maps.InfoWindow({
+            content: descripcion
+        });
 
-    // Asignar manejador de evento click sobre la chincheta para que se muestre la información del evento
-    marker.addListener('click', function() {
-        infowindow.open(mapa, marker);
-    });
+        // Asignar manejador de evento click sobre la chincheta para que se muestre la información del evento
+        marker.addListener('click', function() {
+            infowindow.open(mapa, marker);
+        });
+    }
 }
