@@ -85,7 +85,7 @@ appEventos.eventoModule.eliminarSuscripcionTemplate = '<button type="button" id=
  * Template para mensaje de error en suscripcion
  * @type {string}
  */
-appEventos.eventoModule.errorSuscripcionTemplate = '<div class="alert alert-danger msg_error"></div>';
+appEventos.eventoModule.errorSuscripcionTemplate = '<div class="alert msg_suscripcion"></div>';
 
 appEventos.eventoModule.feedTemplate = '<div class="media">' +
                                        '    <div class="media-body">' +
@@ -279,8 +279,9 @@ appEventos.eventoModule.suscribir = function(id_evento, login_usuario){
     $.post("/eventos/api/usuarioActual/suscripciones", $.parseJSON(JSON.stringify(parameters)), function(data, textStatux, req){
         appEventos.eventoModule.suscrito = true;
         appEventos.eventoModule.renderizarSuscripcion(true);
+        appEventos.eventoModule.renderizarResultadoSuscripcion("Suscripción realizada correctamente", true);
     }).fail(function(){
-        appEventos.eventoModule.renderizarErrorSuscripcion("Se ha producido un error al intentar suscribirse del evento, por favor intentelo de nuevo más tarde.");
+        appEventos.eventoModule.renderizarResultadoSuscripcion("Se ha producido un error al intentar suscribirse del evento, por favor intentelo de nuevo más tarde.", false);
     });
 }
 
@@ -308,9 +309,10 @@ appEventos.eventoModule.desuscribir = function(id_evento, login_usuario){
             if (req.status == 200){
                 appEventos.eventoModule.suscrito = false;
                 appEventos.eventoModule.renderizarSuscripcion(false);
+                appEventos.eventoModule.renderizarResultadoSuscripcion("Suscripción eliminada correctamente", true);
             }
             else{
-                appEventos.eventoModule.renderizarErrorSuscripcion("Se ha producido un error al intentar desuscribirse del evento, por favor intentelo de nuevo más tarde.");
+                appEventos.eventoModule.renderizarResultadoSuscripcion("Se ha producido un error al intentar desuscribirse del evento, por favor intentelo de nuevo más tarde.", false);
             }
         }
     });
@@ -362,23 +364,28 @@ appEventos.eventoModule.renderizarSuscripcion = function(suscrito){
  * Muestra el mensaje de error al intentar suscribirse a un método
  * @param  {string} mensaje
  */
-appEventos.eventoModule.renderizarErrorSuscripcion = function(mensaje){
+appEventos.eventoModule.renderizarResultadoSuscripcion = function(mensaje, ok){
     // Añadir mensaje al dom
     var mensajeElement = $(appEventos.eventoModule.errorSuscripcionTemplate);
+    var clase_css = "alert-danger";
+    if (ok){
+        clase_css = "alert-success";
+    }
+    mensajeElement.addClass(clase_css);
     mensajeElement.html(mensaje);
     mensajeElement.appendTo($("body"));
     
     // Activar animación de entrada del elemento
-    $(".msg_error").animate({
+    $(".msg_suscripcion").animate({
         opacity: 1
     }, 1000);
 
     // Activar animación de salida del elemento
     window.setTimeout(function(){
-        $(".msg_error").animate({
+        $(".msg_suscripcion").animate({
             opacity: 0
         }, 1000).promise().done(function(){
-            $(".msg_error").remove();
+            $(".msg_suscripcion").remove();
         });
     }, 3000);
 }
