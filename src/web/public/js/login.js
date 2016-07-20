@@ -84,6 +84,7 @@ appEventos.loginModule.logout = function(){
             if(req.status == 200){
                 appEventos.loginModule.infoUsuario = null;
                 appEventos.loginModule.renderInfoLogin();
+                window.location = "/eventos";
             }
         }
     }
@@ -171,10 +172,15 @@ appEventos.loginModule.renderErrorLogin = function(){
     // Se añade el mensaje al dom
     var formLogin = document.getElementById("form_login");
     if (formLogin != null){
+        var mensajes = document.getElementsByClassName("msg_error_login");
+        for (i = 0; i < mensajes.length; i++) {
+            formLogin.removeChild(mensajes[i]);
+        }
+
         formLogin.innerHTML += appEventos.loginModule.errorLoginTemplate;
     
         // Asignar manejador de evento para detectar el fin de la transición y eliminar el elemento del dom
-        var mensajes = document.getElementsByClassName("msg_error_login");
+        mensajes = document.getElementsByClassName("msg_error_login");
         for (i = 0; i < mensajes.length; i++) {
             mensajes[i].addEventListener('transitionend', onTransitionEnd, false);
         }
@@ -184,14 +190,20 @@ appEventos.loginModule.renderErrorLogin = function(){
             var mensajes = document.getElementsByClassName("msg_error_login");
             for (i = 0; i < mensajes.length; i++) {
                 mensajes[i].classList.add("end");
-            }
+            };
+            return false;
         }, 3000);
         
         // Método que elimina un mensaje de error del formulario
         function onTransitionEnd() {
             formLogin.removeChild(this);
+            return false;
         }
     }
+
+    appEventos.loginModule.handlerLogin();
+
+    return false;
 }
 
 /**
@@ -199,18 +211,7 @@ appEventos.loginModule.renderErrorLogin = function(){
  */
 appEventos.loginModule.init = function(){
     // Asignar manejador de evento para login
-    var btLogin = document.getElementById("bt_login");
-    if (btLogin != null){
-        btLogin.onclick = function(event){
-            event = event || window.event;
-
-            var login = document.getElementById("txt_login").value;
-            var password = document.getElementById("txt_password").value;
-            appEventos.loginModule.login(login, password);
-
-            return false;
-        }
-    }
+    appEventos.loginModule.handlerLogin();
 
     // Asignar manejador de evento para logout
     var btLogout = document.getElementById("logout");
@@ -237,6 +238,25 @@ appEventos.loginModule.init = function(){
 
     // Pedir información de usuario
     appEventos.loginModule.getInfoUsuario();
+}
+
+/**
+ * Asigna el manejador del evento click sobre el botón de login
+ */
+appEventos.loginModule.handlerLogin = function(){
+    // Asignar manejador de evento para login
+    var btLogin = document.getElementById("bt_login");
+    if (btLogin != null){
+        btLogin.onclick = function(event){
+            event = event || window.event;
+                
+            var login = document.getElementById("txt_login").value;
+            var password = document.getElementById("txt_password").value;
+            appEventos.loginModule.login(login, password);
+
+            return false;
+        }
+    }
 }
 
 jQuery(document).ready(function() {
