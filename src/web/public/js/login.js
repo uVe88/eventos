@@ -50,20 +50,24 @@ appEventos.loginModule.login = function(login, password){
     // Relizar petición
     req.send(JSON.stringify(data));
 
+    var def = $.Deferred();
+
     // Función que maneja la respuesta del servidor
     function loginCallback(){
         if (req.readyState == 4) { 
             if(req.status == 200){
                 appEventos.loginModule.infoUsuario = JSON.parse(req.responseText);
                 appEventos.loginModule.renderInfoLogin();
+                def.resolve();
             }
             else if(req.status == 401){
                 appEventos.loginModule.renderErrorLogin();
+                def.reject();
             }
         }
     }
 
-    return false;
+    return def.promise();
 }
 
 /**
@@ -78,16 +82,20 @@ appEventos.loginModule.logout = function(){
     // Realizar petición
     req.send(null);
 
+    var def = $.Deferred();
+
     // Función que maneja la respuesta del servidor
     function logoutCallback(){
         if (req.readyState == 4) { 
             if(req.status == 200){
                 appEventos.loginModule.infoUsuario = null;
                 appEventos.loginModule.renderInfoLogin();
-                window.location = "/eventos";
+                def.resolve();
             }
         }
     }
+
+    return def.promise();
 };
 
 /**
@@ -99,9 +107,25 @@ appEventos.loginModule.logeado = function(){
 };
 
 /**
+ * Comprobar si hay algún usuario logeado devolviendo el resultado en una promesa
+ */
+appEventos.loginModule.logeadoAsync = function(){
+    var def = $.Deferred();
+    var promise = appEventos.loginModule.getInfoUsuario();
+    promise.done(function(){
+        def.resolve(appEventos.loginModule.infoUsuario != null);
+    }).fail(function(){
+        def.resolve(false);
+    });
+    return def.promise();
+};
+
+/**
  * Obtiene la información del usuario logeado y la almacena en la propiedad infoUsuario
  */
 appEventos.loginModule.getInfoUsuario = function(){
+    var def = $.Deferred();
+
     if (appEventos.loginModule.infoUsuario == null){
         // Instanciar petición
         var req = new XMLHttpRequest();
@@ -116,11 +140,20 @@ appEventos.loginModule.getInfoUsuario = function(){
             if (req.readyState == 4) { 
                 if(req.status == 200){
                     appEventos.loginModule.infoUsuario = JSON.parse(req.responseText);
+                    def.resolve();
                     appEventos.loginModule.renderInfoLogin();
+                }
+                else{
+                    def.reject();
                 }
             }
         }
     }
+    else{
+        def.resolve();
+    }
+
+    return def.promise();
 }
 
 /**
@@ -220,6 +253,7 @@ appEventos.loginModule.init = function(){
             event = event || window.event;
 
             appEventos.loginModule.logout();
+            window.location("/eventos");
         } 
     }
 

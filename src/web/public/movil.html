@@ -5,72 +5,148 @@
 		<title>Event planners</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-		
-		<script src="js/apireader.js"></script>
-		<script src="js/movil.js"></script>
-		<script src="js/login.js"></script>
-		<script src="js/evento.js"></script>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6rMCii-S20vponRYPmm2uAWxPbEd9WdQ"></script>
+		<link rel="stylesheet" href="http://demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css" />
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 	</head>
 	<body>
-	
-		<div data-role="page" id="populares">
+
+		<!-- VISTA EVENTOS POPULARES -->
+		<div data-role="page" id="vista_populares">
 			<div data-role="header">
 				<h1>Eventos populares</h1>
 			</div>
 			<div role="main" class="ui-content">
 			</div>
-			<div data-role="footer" data-position="fixed"></div>
+			<div data-role="footer" data-position="fixed">
+				<div data-id="mainTab" data-role="navbar">
+					<ul>
+						<li>
+							<a href="#vista_login" class="ui-btn" id="bt_ir_login" data-transition="slide">Login</a>
+							<button class="ui-btn hidden" id="bt_logout_movil">Logout</button>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
-		<div data-role="page" id="login">
+
+		<!-- VISTA LOGIN -->
+		<div data-role="page" id="vista_login">
 			<div data-role="header">
 				<h1>Login</h1>
 			</div>
 			<div role="main" class="ui-content">
+				<form>
+					<label for="txt_usuario_movil">Usuario:</label>
+					<input type="text" name="txt_usuario_movil" id="txt_usuario_movil" value="">
+
+					<label for="txt_password_movil">Contraseña:</label>
+					<input type="password" name="txt_password_movil" id="txt_password_movil" value="">
+
+					<button class="ui-btn" id="bt_login_movil">Login</button>
+
+					<label for="slider-flip-m">Recordar contraseña</label>
+					<select name="slider-flip-m" id="recordar" data-role="slider" data-mini="true">
+					    <option value="1" selected="">No</option>
+					    <option value="2">Si</option>
+					</select>
+				<form>
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<div data-id="mainTab" data-role="navbar"><ul id="footer_tabs">
-					<li><a href="#populares" data-transition="slide">Volver</a></li>
-				</ul></div>
+				<div data-id="mainTab" data-role="navbar">
+					<ul id="footer_tabs">
+						<li><a href="#vista_populares" data-transition="slide">Volver</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
-		<div data-role="page" id="detalles">
+
+		<!-- VISTA DETALLE EVENTO -->
+		<div data-role="page" id="vista_detalles">
 			<div data-role="header">
 				<h1>Detalles de evento</h1>
 			</div>
 			<div role="main" class="ui-content">
+				<img src="" id="img_evento" style="width: 100%;">
+
+				<form>
+				    <label for="txt_descripcion">Descripción</label>
+				    <textarea type="text" name="txt_descripcion" id="txt_descripcion" readonly rows="5" cols="40"></textarea>
+				
+				    <label for="txt_direccion">Dirección</label>
+				    <input type="text" name="txt_direccion" id="txt_direccion" readonly></input>
+
+					<!-- entradas -->
+					
+				    <label for="txt_fecha">Fecha</label>
+				    <input type="text" name="txt_fecha" id="txt_fecha" readonly></input>
+
+				    <label for="txt_visitas">Visitas</label>
+				    <input type="text" name="txt_visitas" id="txt_visitas" readonly></input>
+				</form>
 			</div>
 			<div data-role="footer" data-position="fixed">
 				<div data-id="mainTab" data-role="navbar"><ul id="footer_tabs">
-					<li><a href="#populares" data-transition="slide">Volver</a></li>
+					<li><a href="#vista_populares" data-transition="slide">Volver</a></li>
 				</ul></div>
 			</div>
 		</div>
-		<div data-role="page" id="mapamovil">
+
+		<!-- VISTA MAPA EVENTO -->
+		<div data-role="page" id="vista_mapamovil">
 			<div data-role="header">
 				<h1>Mapa de evento</h1>
 			</div>
 			<div role="main" class="ui-content">
+				<div id="mapa_movil" style="width: 100%; height: 500px;">
+				</div>
 			</div>
 			<div data-role="footer" data-position="fixed">
 				<div data-id="mainTab" data-role="navbar"><ul id="footer_tabs">
-					<li><a href="#populares" data-transition="slide">Volver</a></li>
+					<li><a href="#vista_detalles" data-transition="slide">Volver</a></li>
 				</ul></div>
 			</div>
 		</div>
-		<div data-role="page" id="feed">
+
+		<!-- VISTA EVENTOS FEED -->
+		<div data-role="page" id="vista_feed">
 			<div data-role="header">
 				<h1>Feed</h1>
 			</div>
 			<div role="main" class="ui-content">
+				<div id="feed_movil_container">
+				</div>
 			</div>
 			<div data-role="footer" data-position="fixed">
 				<div data-id="mainTab" data-role="navbar"><ul id="footer_tabs">
-					<li><a href="#populares" data-transition="slide">Volver</a></li>
+					<li><a href="#vista_populares" data-transition="slide">Volver</a></li>
 				</ul></div>
 			</div>
 		</div>
+
+		<!-- Dialog -->
+		<div data-role="page" data-dialog="true" id="vista_dialog">
+			<div data-role="header" data-theme="b">
+				<h1>Atención</h1>
+			</div>
+
+			<div role="main" class="ui-content">
+				<h1>Suscripción</h1>
+				<div id="mensaje"></div>
+				<a href="#vista_detalles" data-rel="back" class="ui-btn ui-shadow ui-corner-all ui-btn-a">Cerrar</a>
+			</div>
+		</div>
+
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6rMCii-S20vponRYPmm2uAWxPbEd9WdQ"></script>
+
+		<script src="js/apireader.js"></script>
+		<script src="js/movil.js"></script>
+		<script src="js/login.js"></script>
+		<script src="js/evento.js"></script>
+		
   	</body>
 </html>

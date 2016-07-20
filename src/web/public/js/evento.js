@@ -255,6 +255,8 @@ appEventos.eventoModule.localizarEvento = function(lat, lon, descripcion){
 appEventos.eventoModule.estaSuscrito = function(){
     var parameters = "?id_evento=" + appEventos.eventoModule.idEventoActual;
 
+    var def = $.Deferred();
+
     $.get('/eventos/api/usuarioActual/suscrito_a' + parameters, function(data, textStatus, req){
         if (data === "si"){
             appEventos.eventoModule.suscrito = true;
@@ -262,8 +264,11 @@ appEventos.eventoModule.estaSuscrito = function(){
         else{
             appEventos.eventoModule.suscrito = false;
         }
+        def.resolve(appEventos.eventoModule.suscrito);
         appEventos.eventoModule.renderizarSuscripcion(appEventos.eventoModule.suscrito);
     });
+
+    return def.promise();
 }
 
 /**
@@ -276,13 +281,17 @@ appEventos.eventoModule.suscribir = function(id_evento, login_usuario){
         id_evento: id_evento,
         login_usuario: login_usuario
     };
+    var def = $.Deferred();
     $.post("/eventos/api/usuarioActual/suscripciones", $.parseJSON(JSON.stringify(parameters)), function(data, textStatux, req){
         appEventos.eventoModule.suscrito = true;
         appEventos.eventoModule.renderizarSuscripcion(true);
         appEventos.eventoModule.renderizarResultadoSuscripcion("Suscripción realizada correctamente", true);
+        def.resolve(true);
     }).fail(function(){
         appEventos.eventoModule.renderizarResultadoSuscripcion("Se ha producido un error al intentar suscribirse del evento, por favor intentelo de nuevo más tarde.", false);
+        def.resolve(false);
     });
+    return def.promise();
 }
 
 /**
@@ -295,6 +304,7 @@ appEventos.eventoModule.desuscribir = function(id_evento, login_usuario){
         id_evento: id_evento,
         login_usuario: login_usuario
     };
+    var def = $.Deferred();
     var json_data = $.parseJSON(JSON.stringify(parameters));
     $.ajax({
         url: "/eventos/api/usuarioActual/suscripciones",
@@ -304,18 +314,22 @@ appEventos.eventoModule.desuscribir = function(id_evento, login_usuario){
         success: function(data, textStatux, req){
             appEventos.eventoModule.suscrito = false;
             appEventos.eventoModule.renderizarSuscripcion(false);
+            def.resolve(false);
         },
         error: function(req, textStatus, errorThrown){
             if (req.status == 200){
                 appEventos.eventoModule.suscrito = false;
                 appEventos.eventoModule.renderizarSuscripcion(false);
                 appEventos.eventoModule.renderizarResultadoSuscripcion("Suscripción eliminada correctamente", true);
+                def.resolve(false);
             }
             else{
                 appEventos.eventoModule.renderizarResultadoSuscripcion("Se ha producido un error al intentar desuscribirse del evento, por favor intentelo de nuevo más tarde.", false);
+                def.resolve(true);
             }
         }
     });
+    return def.promise();
 }
 
 /**
@@ -365,36 +379,48 @@ appEventos.eventoModule.renderizarSuscripcion = function(suscrito){
  * @param  {string} mensaje
  */
 appEventos.eventoModule.renderizarResultadoSuscripcion = function(mensaje, ok){
-    // Añadir mensaje al dom
-    var mensajeElement = $(appEventos.eventoModule.errorSuscripcionTemplate);
-    var clase_css = "alert-danger";
-    if (ok){
-        clase_css = "alert-success";
-    }
-    mensajeElement.addClass(clase_css);
-    mensajeElement.html(mensaje);
-    mensajeElement.appendTo($("body"));
-    
-    // Activar animación de entrada del elemento
-    $(".msg_suscripcion").animate({
-        opacity: 1
-    }, 1000);
+    var containerMovil = $("#feed_movil_container");
 
-    // Activar animación de salida del elemento
-    window.setTimeout(function(){
+    // Web normal
+    if (containerMovil.length == 0){
+        // Añadir mensaje al dom
+        var mensajeElement = $(appEventos.eventoModule.errorSuscripcionTemplate);
+        var clase_css = "alert-danger";
+        if (ok){
+            clase_css = "alert-success";
+        }
+        mensajeElement.addClass(clase_css);
+        mensajeElement.html(mensaje);
+        mensajeElement.appendTo($("body"));
+        
+        // Activar animación de entrada del elemento
         $(".msg_suscripcion").animate({
-            opacity: 0
-        }, 1000).promise().done(function(){
-            $(".msg_suscripcion").remove();
-        });
-    }, 3000);
+            opacity: 1
+        }, 1000);
+
+        // Activar animación de salida del elemento
+        window.setTimeout(function(){
+            $(".msg_suscripcion").animate({
+                opacity: 0
+            }, 1000).promise().done(function(){
+                $(".msg_suscripcion").remove();
+            });
+        }, 3000);
+    }
+    else{
+        // Web movil
+        $("#vista_dialog #mensaje").html(mensaje);
+        //$.mobile.pageContainer.pagecontainer("change", "#vista_dialog");
+        $.mobile.changePage("#vista_dialog", {transition: 'pop'});
+    }
 }
 
 /**
  * Obtener feed del usuario actual
  */
 appEventos.eventoModule.obtenerFeed = function(){
-    
+    var def = $.Deferred();
+
     $.get('/eventos/api/usuarioActual/feed', function(data, textStatus, req){
         var comentarios = $.parseJSON(data);
 
@@ -421,6 +447,8 @@ appEventos.eventoModule.obtenerFeed = function(){
                 evento.comentarios = comentarios_evento;
             });
             
+            def.resolve(eventos);
+
             // Renderizar los eventos con comentarios
             var login_usuario_actual = appEventos.loginModule.infoUsuario.login;
             appEventos.eventoModule.renderizarFeed(eventos, login_usuario_actual);
@@ -434,6 +462,8 @@ appEventos.eventoModule.obtenerFeed = function(){
             def.resolve(evento);
         });
     }
+
+    return def.promise();
 }
 
 /**
@@ -443,25 +473,27 @@ appEventos.eventoModule.obtenerFeed = function(){
 appEventos.eventoModule.renderizarFeed = function(eventos, login_usuario_actual){
     var feedContainer = $(".container #feed_container");
 
-    // Limpiar container
-    feedContainer.html("");
+    if (feedContainer.length > 0){
+        // Limpiar container
+        feedContainer.html("");
 
-    $.each(eventos, function(index, evento){
-        // Pintar cabecera de evento
-        $("#feed_container").append("<h3>" + evento.titulo + "</h3>");
+        $.each(eventos, function(index, evento){
+            // Pintar cabecera de evento
+            $("#feed_container").append("<h3>" + evento.titulo + "</h3>");
 
-        // Pintar comentarios
-        $.each(evento.comentarios, function(index, comentario){
-            var element = $(appEventos.eventoModule.feedTemplate);
-            element.find(".media-heading").prepend(comentario.usuario_login);
-            element.find(".media-heading small").append(comentario.fecha_hora);
-            if (login_usuario_actual == comentario.usuario_login){
-                element.find(".media-heading").addClass("mi-comentario");
-            }
-            element.append(comentario.texto);
-            element.appendTo(feedContainer);
+            // Pintar comentarios
+            $.each(evento.comentarios, function(index, comentario){
+                var element = $(appEventos.eventoModule.feedTemplate);
+                element.find(".media-heading").prepend(comentario.usuario_login);
+                element.find(".media-heading small").append(comentario.fecha_hora);
+                if (login_usuario_actual == comentario.usuario_login){
+                    element.find(".media-heading").addClass("mi-comentario");
+                }
+                element.append(comentario.texto);
+                element.appendTo(feedContainer);
+            });
         });
-    });
+    }
 }
 
 /**
